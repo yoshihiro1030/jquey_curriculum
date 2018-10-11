@@ -23,7 +23,13 @@
     <script>
       // 今回やるのはモーダルです。
       // .modal-show をクリックすることで .modal をfadeInさせる。
+      $('.modal-show').on('click', function() {
+        $('.modal').fadeIn()
+      });
       // .modal-close をクリックで .modal をfadeOutさせる。
+      $('.modal-close').on('click', function() {
+        $('.modal').fadeOut()
+      });
       // .click() クリック時のイベントを登録する。
       // .fadeIn() 一定時間かけてフェードインする。
       // .fadeOut() 一定時間かけてフェードアウトする。
