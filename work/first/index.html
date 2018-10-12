@@ -75,7 +75,7 @@
 
     // 第2問  id='q2'の要素をクリックしたら背景色をピンクにせよ。
     $('#q2').click(function() {
-      $('#q2').css('background-color', 'pink')
+      $(this).css('background-color', 'pink')
     });
 
     // 第3問  id='q3'の要素をクリックしたら2秒かけてフェードアウトさせよ。
@@ -99,7 +99,10 @@
 
     // 第6問  id='q6'の要素をクリックしたらこの要素を2秒かけてmargin-topとmargin-leftを100pxの位置に移動させよ。
     $('#q6').click(function() {
-      $('#q6').animate({'margin-top': '100px','margin-left': '100px'}, 2000)
+      $('#q6').animate({
+        'margin-top': '100px',
+        'margin-left': '100px'
+      }, 2000)
     });
 
     // 第7問  id='q7'の子要素をクリックしたら、その要素のインデックス（何番目か）をconsole.log()とalert()を用いて表示させよ。
@@ -127,7 +130,7 @@
     // 第10問 id='q10'の子要素をクリックしたら、その要素のインデックスと等しいid='q11'の子要素にlargeというクラスを追加せよ。
     $('#q10 li').on('click', function() {
       var index = $('#q10 li').index(this);
-      $('#q11 li').index('this').addClass('large');
+      $('#q11 li').eq(index).addClass('large');
     });
   });
 </script>
