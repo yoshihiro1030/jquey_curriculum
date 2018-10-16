@@ -89,7 +89,11 @@
             hits: 20,
             page: pageCount,
             keyword: searchWord,
-          }
+          },
+          error: [
+            {"error": "wrong_parameter", "error_description": "検索キーワードが正しくありません"},
+            {"error": "too_many_reqests", "error_description": "しばらく時間を空けてからご利用ください。"}
+          ],
         }
 
         init();
@@ -97,7 +101,6 @@
         $('#js-search-button').on('click', function() {
           ajaxSearch();
         });
-
 
         function init() {
           $('.lists li').remove();
@@ -114,10 +117,22 @@
           );
         }
 
-        function connectError() {
+        function connectError(errorThrown) {
+          $('.message').remove();
+          if (errorThrown === "Bad Request") {
+            $('.lists').prepend(
+              "<div class='message'>"+ ajaxObj.error[0].error_description +"</div>"
+            );
+          } else if (errorThrown === "429") {
+            $('.lists').prepend(
+              "<div class='message'>"+ ajaxObj.error[1].error_description +"</div>"
+            );
+          } 
+        }
+        function emptyMsg(error) {
           $('.message').remove();
           $('.lists').prepend(
-            "<div class='message'>通信に失敗しました。</div>"
+            "<div class='message'>検索キーワードを入力してください。</div>"
           );
         }
 
@@ -143,6 +158,7 @@
           searchWord = $('#js-search-word').val();
           if (searchWord === '') {
             init();
+            emptyMsg();
           } else if (searchWord !== '') {
             ajaxObj.data.keyword = searchWord;
             ajaxObj.data.page = pageCount;
@@ -183,8 +199,11 @@
                     }
                 }
               })
-              .fail(function(jqXHR, textStatus, errorThrown){
-                connectError();
+              .fail(function(jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+                connectError(errorThrown);
               });
           }
         }
