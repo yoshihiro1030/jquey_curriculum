@@ -78,6 +78,7 @@
         let pageCount;
         let searchCount;
         let searchWord;
+
         let ajaxObj = {
           url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
           type: 'GET',
@@ -96,19 +97,22 @@
           ],
         }
 
+
         init();
 
         $('#js-search-button').on('click', function() {
           ajaxSearch();
         });
-
+        
+        // functions
         function init() {
           $('.lists li').remove();
           pageCount = 1;
           searchCount = 0;
           currentSearchWord = '';
         };
-
+        
+        // errorFuncs
         function errorMsg() {
           $('.message').remove();
           $('.lists').prepend(
@@ -116,7 +120,16 @@
               "別のキーワードで検索してください</div>"
           );
         }
-
+        function emptyMsg() {
+          $('.message').remove();
+          $('.lists').prepend(
+            "<div class='message'>検索キーワードを入力してください。</div>"
+          );
+        }
+        function removeMsg() {
+          $('.message').remove();
+        }
+        // apiError
         function connectError(errorThrown) {
           $('.message').remove();
           if (errorThrown === "Bad Request") {
@@ -129,17 +142,7 @@
             );
           } 
         }
-        function emptyMsg(error) {
-          $('.message').remove();
-          $('.lists').prepend(
-            "<div class='message'>検索キーワードを入力してください。</div>"
-          );
-        }
-
-        function removeMsg() {
-          $('.message').remove();
-        }
-
+        
         function createElemnts(val) {
           $('.lists').prepend(
           "<li class='lists__item'>" +
@@ -153,7 +156,7 @@
           "</div>" +
           "</li>");
         };
-
+        
         function ajaxSearch() {
           searchWord = $('#js-search-word').val();
           if (searchWord === '') {
@@ -196,13 +199,11 @@
                         data.Items.forEach(function(val) {
                           createElemnts(val);
                         });
+                        currentSearchWord = searchWord;
                     }
                 }
               })
               .fail(function(jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR);
-                console.log(textStatus);
-                console.log(errorThrown);
                 connectError(errorThrown);
               });
           }
