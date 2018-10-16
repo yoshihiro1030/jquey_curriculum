@@ -174,7 +174,6 @@
                     init();
                   } else if (searchCount > 0 && searchWord === currentSearchWord) {
                       errorMsg();
-                      currentSearchWord = searchWord;
                   } else if (searchCount > 0 && searchWord !== currentSearchWord) {
                       errorMsg();
                       init();
@@ -182,10 +181,10 @@
                 } else if(data.count > 0) {
                     removeMsg();
                     if (searchCount === 0) {
-                      currentSearchWord = searchWord;
                       data.Items.forEach(function(val) {
                         createElemnts(val);
                       });
+                      currentSearchWord = searchWord;
                       searchCount++;
                       pageCount++;
                     } else if (searchCount > 0 && currentSearchWord === searchWord) {
