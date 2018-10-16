@@ -41,7 +41,7 @@
       //    <a href='' class='lists__item__link' target='_blank'>
       //      <img src='' class='lists__item__img' alt=''>
       //      <p class='lists__item__detail'>作品名：</p>
-      //      <p class='lists__item__detail'>作者　：</p>
+      //      <p class='lists__item__detail'>作者　：</p>　
       //      <p class='lists__item__detail'>出版社：</p>
       //    </a>
       //  </div>
@@ -63,7 +63,132 @@
       // }).done(function(data) {
       //   // この中にデータ取得後の動きを記述していきます。
       // });
-      //
+
+      // --------------------------------------
+      // 【課題】
+      // get,postの説明
+      // APIとは
+      //  ok検索結果は20件
+      // 検索結果が０の時の処理
+      // 通信失敗時の処理
+      // 処理単位で関数をわける　定義して呼び出す
+      // --------------------------------------
+      $(function() {
+        let currentSearchWord;
+        let pageCount;
+        let searchCount;
+        let searchWord;
+        let ajaxObj = {
+          url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+          type: 'GET',
+          datatype: 'json',
+          data: {
+            // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
+            applicationId: '1019399324990976605', // (今回はこのIDを使用してください)
+            booksGenreId: '001',
+            hits: 20,
+            page: pageCount,
+            keyword: searchWord,
+          }
+        }
+
+        init();
+
+        $('#js-search-button').on('click', function() {
+          ajaxSearch();
+        });
+
+
+        function init() {
+          $('.lists li').remove();
+          pageCount = 1;
+          searchCount = 0;
+          currentSearchWord = '';
+        };
+
+        function errorMsg() {
+          $('.message').remove();
+          $('.lists').prepend(
+            "<div class='message'>検索結果が見つかりませんでした。<br>" +
+              "別のキーワードで検索してください</div>"
+          );
+        }
+
+        function connectError() {
+          $('.message').remove();
+          $('.lists').prepend(
+            "<div class='message'>通信に失敗しました。</div>"
+          );
+        }
+
+        function removeMsg() {
+          $('.message').remove();
+        }
+
+        function createElemnts(val) {
+          $('.lists').prepend(
+          "<li class='lists__item'>" +
+          "<div class='lists__item__inner'>" +
+          "<a href='" + val.Item.itemUrl + "' class='lists__item__link' target='_blank'>" +
+          "<img src='" + val.Item.largeImageUrl + "' class='lists__item__img' alt=''>" +
+          "<p class='lists__item__detail'>作品名：　" + val.Item.title + "</p>" +
+          "<p class='lists__item__detail'>作者　：　" + val.Item.author + "</p>" +
+          "<p class='lists__item__detail'>出版社：　" + val.Item.publisherName + "</p>" +
+          "</a>" +
+          "</div>" +
+          "</li>");
+        };
+
+        function ajaxSearch() {
+          searchWord = $('#js-search-word').val();
+          if (searchWord === '') {
+            init();
+          } else if (searchWord !== '') {
+            ajaxObj.data.keyword = searchWord;
+            ajaxObj.data.page = pageCount;
+            $.ajax(ajaxObj)
+              .done(function(data) {
+                if (data.count === 0) {
+                  if (searchCount === 0) {
+                    errorMsg();
+                    searchCount++;
+                    init();
+                  } else if (searchCount > 0 && searchWord === currentSearchWord) {
+                      errorMsg();
+                      currentSearchWord = searchWord;
+                  } else if (searchCount > 0 && searchWord !== currentSearchWord) {
+                      errorMsg();
+                      init();
+                  }
+                } else if(data.count > 0) {
+                    removeMsg();
+                    if (searchCount === 0) {
+                      currentSearchWord = searchWord;
+                      data.Items.forEach(function(val) {
+                        createElemnts(val);
+                      });
+                      searchCount++;
+                      pageCount++;
+                    } else if (searchCount > 0 && currentSearchWord === searchWord) {
+                        data.Items.forEach(function(val) {
+                          createElemnts(val);
+                        });
+                        searchCount++;
+                        pageCount++;
+                    } else if (searchCount > 0 && searchWord !== currentSearchWord) {
+                        init();
+                        data.Items.forEach(function(val) {
+                          createElemnts(val);
+                        });
+                    }
+                }
+              })
+              .fail(function(jqXHR, textStatus, errorThrown){
+                connectError();
+              });
+          }
+        }
+      });
     </script>
   </body>
 </html>

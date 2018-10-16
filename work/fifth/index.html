@@ -102,6 +102,7 @@
           var selectVal = $('.select').val(); // この時のvalueを保持
           $('.list li').each(function() { // liをそれぞれ判定
             if ($(this).data('category-type') === selectVal || selectVal === 'all') { // 一致もしくは'all'の場合
+            // if文の中はメソッドよりも変数にしたほうがよい
               $(this).show();
               } else { // それ以外（不一致もしくはallでない）
                 $(this).hide();
